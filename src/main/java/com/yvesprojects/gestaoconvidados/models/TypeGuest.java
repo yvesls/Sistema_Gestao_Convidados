@@ -1,5 +1,7 @@
 package com.yvesprojects.gestaoconvidados.models;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -7,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -27,6 +30,9 @@ public class TypeGuest {
 	@NotEmpty
 	@Size(min = 2, max = 30)
 	private String typeDescription;
+	
+	@OneToMany(mappedBy = "typeGuest")
+	private List<Guest> guestList = new ArrayList<Guest>();
 	
 	public TypeGuest() {
 	}

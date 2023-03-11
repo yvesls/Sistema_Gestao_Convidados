@@ -62,6 +62,10 @@ public class Guest {
 		return guestId;
 	}
 
+	public void setGuestId(Long guestId) {
+		this.guestId = guestId;
+	}
+
 	public TypeGuest getTypeGuest() {
 		return typeGuest;
 	}

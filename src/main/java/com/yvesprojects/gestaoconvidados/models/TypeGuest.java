@@ -51,6 +51,10 @@ public class TypeGuest {
 		return typeId;
 	}
 
+	public void setTypeId(Long typeId) {
+		this.typeId = typeId;
+	}
+
 	public String getTypeDescription() {
 		return typeDescription;
 	}

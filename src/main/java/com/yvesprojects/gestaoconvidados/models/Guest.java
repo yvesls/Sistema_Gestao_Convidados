@@ -54,10 +54,6 @@ public class Guest {
 		this.present = present;
 	}
 
-	public static String getTableName() {
-		return TABLE_NAME;
-	}
-
 	public Long getGuestId() {
 		return guestId;
 	}
@@ -70,8 +66,16 @@ public class Guest {
 		return typeGuest;
 	}
 
+	public void setTypeGuest(TypeGuest typeGuest) {
+		this.typeGuest = typeGuest;
+	}
+
 	public User getUser() {
 		return user;
+	}
+	
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getGuestName() {
@@ -80,6 +84,10 @@ public class Guest {
 
 	public Boolean getPresent() {
 		return present;
+	}
+
+	public void setPresent(Boolean present) {
+		this.present = present;
 	}
 
 	@Override

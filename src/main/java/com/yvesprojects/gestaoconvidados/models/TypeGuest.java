@@ -1,7 +1,5 @@
 package com.yvesprojects.gestaoconvidados.models;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -9,7 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -24,6 +23,10 @@ public class TypeGuest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // configura o autoincrement
 	@Column(name = "type_id", unique = true)
 	private Long typeId;
+
+	@ManyToOne
+	@JoinColumn(name = "user_id", nullable = false, updatable = false)
+	private User user;
 	
 	@Column(name = "type_description", length = 30, nullable = false)
 	@NotNull
@@ -31,20 +34,14 @@ public class TypeGuest {
 	@Size(min = 2, max = 30)
 	private String typeDescription;
 	
-	@OneToMany(mappedBy = "typeGuest")
-	private List<Guest> guestList = new ArrayList<Guest>();
-	
 	public TypeGuest() {
 	}
 
-	public TypeGuest(Long typeId, @NotNull @NotEmpty @Size(min = 2, max = 30) String typeDescription) {
+	public TypeGuest(Long typeId, User user, @NotNull @NotEmpty @Size(min = 2, max = 30) String typeDescription) {
 		super();
 		this.typeId = typeId;
+		this.user = user;
 		this.typeDescription = typeDescription;
-	}
-
-	public static String getTableName() {
-		return TABLE_NAME;
 	}
 
 	public Long getTypeId() {
@@ -54,14 +51,26 @@ public class TypeGuest {
 	public void setTypeId(Long typeId) {
 		this.typeId = typeId;
 	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	public String getTypeDescription() {
 		return typeDescription;
 	}
+	
+	public void setTypeDescription(String typeDescription) {
+		this.typeDescription = typeDescription;
+	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(typeDescription, typeId);
+		return Objects.hash(typeDescription, typeId, user);
 	}
 
 	@Override
@@ -73,6 +82,7 @@ public class TypeGuest {
 		if (getClass() != obj.getClass())
 			return false;
 		TypeGuest other = (TypeGuest) obj;
-		return Objects.equals(typeDescription, other.typeDescription) && Objects.equals(typeId, other.typeId);
+		return Objects.equals(typeDescription, other.typeDescription) && Objects.equals(typeId, other.typeId)
+				&& Objects.equals(user, other.user);
 	}
 }

@@ -18,18 +18,16 @@ import com.fasterxml.jackson.annotation.JsonProperty.Access;
 @Entity
 @Table(name = User.TABLE_NAME)
 public class User {
-	private interface CreateUser{
-	}
+	public interface CreateUser{}
 	
-	private interface UpdateUser{
-	}
+	public interface UpdateUser{}
 	
 	public static final String TABLE_NAME = "user";
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // configura o autoincrement
-	@Column(name = "user_id", unique = true)
-	private Long userId;
+	@Column(name = "id", unique = true)
+	private Long id;
 	
 	@Column(name = "user_name", length = 30, nullable = false)
 	@NotNull(groups = CreateUser.class)
@@ -53,7 +51,7 @@ public class User {
 					UpdateUser.class }) @Size(groups = { CreateUser.class,
 							UpdateUser.class }, min = 8, max = 60) String password) {
 		super();
-		this.userId = userId;
+		this.id = userId;
 		this.userName = userName;
 		this.password = password;
 	}
@@ -62,12 +60,12 @@ public class User {
 		return TABLE_NAME;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setId(Long userId) {
+		this.id = userId;
 	}
 
 	public String getUserName() {
@@ -84,7 +82,7 @@ public class User {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(password, userId, userName);
+		return Objects.hash(password, id, userName);
 	}
 
 	@Override
@@ -96,7 +94,7 @@ public class User {
 		if (getClass() != obj.getClass())
 			return false;
 		User other = (User) obj;
-		return Objects.equals(password, other.password) && Objects.equals(userId, other.userId)
+		return Objects.equals(password, other.password) && Objects.equals(id, other.id)
 				&& Objects.equals(userName, other.userName);
 	}
 }

@@ -21,6 +21,7 @@ import com.yvesprojects.gestaoconvidados.models.TypeGuest;
 import com.yvesprojects.gestaoconvidados.models.User.CreateUser;
 import com.yvesprojects.gestaoconvidados.models.User.UpdateUser;
 import com.yvesprojects.gestaoconvidados.services.TypeGuestService;
+import com.yvesprojects.gestaoconvidados.services.UserService;
 
 @RestController
 @RequestMapping("/typeguest")
@@ -30,6 +31,9 @@ public class TypeGuestController {
 	@Autowired
 	private TypeGuestService typeGuestService;
 	
+	@Autowired
+	private UserService userService;
+	
 	@GetMapping("/{tgId}")
 	public ResponseEntity<TypeGuest> findById(@PathVariable Long tgId) {
 		TypeGuest obj = this.typeGuestService.findById(tgId);
@@ -38,6 +42,7 @@ public class TypeGuestController {
 	
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<TypeGuest>> findAllByUserId(@PathVariable Long userId){
+		this.userService.findById(userId);
 		List<TypeGuest> objs = this.typeGuestService.findAllByUserId(userId);
 		return ResponseEntity.ok().body(objs);
 	}

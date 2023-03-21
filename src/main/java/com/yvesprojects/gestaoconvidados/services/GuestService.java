@@ -50,7 +50,9 @@ public class GuestService {
 	public Guest update(Guest obj) {
 		Guest newObj = findById(obj.getGuestId());
 		newObj.setTypeGuest(obj.getTypeGuest());
+		newObj.setGuestName(obj.getGuestName());
 		newObj.setPresent(obj.getPresent());
+		
 		return this.guestRepository.save(newObj);
 	}
 	

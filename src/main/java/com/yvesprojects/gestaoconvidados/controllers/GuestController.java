@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import com.yvesprojects.gestaoconvidados.models.Guest;
 import com.yvesprojects.gestaoconvidados.models.User.CreateUser;
 import com.yvesprojects.gestaoconvidados.models.User.UpdateUser;
 import com.yvesprojects.gestaoconvidados.services.GuestService;
+import com.yvesprojects.gestaoconvidados.services.UserService;
 
 @RestController
 @RequestMapping("/guest")
@@ -30,6 +32,9 @@ public class GuestController {
 	@Autowired
 	private GuestService guestService;
 	
+	@Autowired
+	private UserService userService;
+	
 	@GetMapping("/{gId}")
 	public ResponseEntity<Guest> findById(@PathVariable Long gId) {
 		Guest obj = this.guestService.findById(gId);
@@ -38,6 +43,7 @@ public class GuestController {
 	
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<Guest>> findAllByUserId(@PathVariable Long userId){
+		this.userService.findById(userId);
 		List<Guest> objs = this.guestService.findAllByUserId(userId);
 		return ResponseEntity.ok().body(objs);
 	}
@@ -59,7 +65,7 @@ public class GuestController {
 	}
 	
 	@DeleteMapping("/{gId}")
-	public ResponseEntity<Void> delete(@PathVariable("tgId") Long gId) {
+	public ResponseEntity<Void> delete(@PathVariable Long gId) {
 		this.guestService.delete(gId);
 		return ResponseEntity.noContent().build();
 	}

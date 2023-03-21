@@ -82,6 +82,10 @@ public class Guest {
 		return guestName;
 	}
 
+	public void setGuestName(String guestName) {
+		this.guestName = guestName;
+	}
+
 	public Boolean getPresent() {
 		return present;
 	}

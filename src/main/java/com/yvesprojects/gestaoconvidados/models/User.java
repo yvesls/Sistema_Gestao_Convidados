@@ -1,7 +1,14 @@
 package com.yvesprojects.gestaoconvidados.models;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +19,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
+import com.yvesprojects.gestaoconvidados.models.enums.ProfileEnum;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -50,4 +58,18 @@ public class User {
 	@NotEmpty(groups = {CreateUser.class, UpdateUser.class})
 	@Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
 	private String password;
+	
+	@ElementCollection(fetch = FetchType.EAGER) // sempre que buscar os usuários do banco vai buscar os perfis junto
+	@JsonProperty(access = Access.WRITE_ONLY)
+	@CollectionTable(name = "user_profile")
+	@Column(name = "profile", nullable = false)
+	private Set<Integer> profiles = new HashSet<>();// Lista de valores únicos
+	
+	private Set<ProfileEnum> getProfiles() {
+		return this.profiles.stream().map(x->ProfileEnum.toEnum(x)).collect(Collectors.toSet()); // pega o perfil, transforma em stream, percorre, passa o valor do code e transforma em um setCollector
+	}
+	
+	public void  addProfile(ProfileEnum profileEnum) {
+		this.profiles.add(profileEnum.getCode());
+	}
 }

@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yvesprojects.gestaoconvidados.exceptions.ObjectNotFoundException;
 import com.yvesprojects.gestaoconvidados.models.Guest;
 import com.yvesprojects.gestaoconvidados.models.TypeGuest;
 import com.yvesprojects.gestaoconvidados.models.User;
@@ -26,7 +27,7 @@ public class GuestService {
 	
 	public Guest findById(Long id) {
 		Optional<Guest> type = this.guestRepository.findById(id);
-		return type.orElseThrow( () -> new RuntimeException(
+		return type.orElseThrow( () -> new ObjectNotFoundException(
 					"Convidado não encontrado! id: " + id + " tipo: " + Guest.class.getName() + "."
 				));
 	}

@@ -1,9 +1,14 @@
 package com.yvesprojects.gestaoconvidados.services;
 
 import java.util.Optional;
+
 import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.yvesprojects.gestaoconvidados.exceptions.DataBindingViolationException;
+import com.yvesprojects.gestaoconvidados.exceptions.ObjectNotFoundException;
 import com.yvesprojects.gestaoconvidados.models.User;
 import com.yvesprojects.gestaoconvidados.repositories.UserRepository;
 
@@ -15,7 +20,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> user = this.userRepository.findById(id);
-		return user.orElseThrow( () -> new RuntimeException(
+		return user.orElseThrow( () -> new ObjectNotFoundException(
 					"Usuário não encontrado! id: " + id + " tipo: " + User.class.getName() + "."
 				));
 	}
@@ -38,7 +43,7 @@ public class UserService {
 		try {
 			this.userRepository.deleteById(id);
 		} catch (Exception e) {
-			throw new RuntimeException("Não é possível excluir pois há entidades relacionadas!");
+			throw new DataBindingViolationException("Não é possível excluir pois há entidades relacionadas!");
 		}
 	}
 }

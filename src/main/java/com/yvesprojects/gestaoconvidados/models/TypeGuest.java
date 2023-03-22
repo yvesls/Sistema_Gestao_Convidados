@@ -28,7 +28,7 @@ public class TypeGuest {
 	@JoinColumn(name = "user_id", nullable = false, updatable = false)
 	private User user;
 	
-	@Column(name = "type_description", length = 30, nullable = false)
+	@Column(name = "type_description", length = 30, nullable = false, unique = true)
 	@NotNull
 	@NotEmpty
 	@Size(min = 2, max = 30)

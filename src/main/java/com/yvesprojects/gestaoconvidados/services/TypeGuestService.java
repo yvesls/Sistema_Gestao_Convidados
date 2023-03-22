@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yvesprojects.gestaoconvidados.exceptions.DataBindingViolationException;
+import com.yvesprojects.gestaoconvidados.exceptions.ObjectNotFoundException;
 import com.yvesprojects.gestaoconvidados.models.TypeGuest;
 import com.yvesprojects.gestaoconvidados.models.User;
 import com.yvesprojects.gestaoconvidados.repositories.TypeGuestRepository;
@@ -23,7 +25,7 @@ public class TypeGuestService {
 	
 	public TypeGuest findById(Long id) {
 		Optional<TypeGuest> type = this.typeGuestRepository.findById(id);
-		return type.orElseThrow( () -> new RuntimeException(
+		return type.orElseThrow( () -> new ObjectNotFoundException(
 					"Tipo de convidado não encontrado! id: " + id + " tipo: " + TypeGuest.class.getName() + "."
 				));
 	}
@@ -53,7 +55,7 @@ public class TypeGuestService {
 		try {
 			this.typeGuestRepository.deleteById(id);
 		} catch (Exception e) {
-			throw new RuntimeException("Não é possível excluir pois há entidades relacionadas!");
+			throw new DataBindingViolationException("Não é possível excluir pois há entidades relacionadas!");
 		}
 	}
 }

@@ -50,7 +50,7 @@ public class User {
 	@NotNull(groups = CreateUser.class)
 	@NotEmpty(groups = CreateUser.class)
 	@Size(groups = CreateUser.class, min = 2, max = 30)
-	private String userName;
+	private String username;
 	
 	@JsonProperty(access = Access.WRITE_ONLY) // Define que a senha será somente para escrita, não retornando valor ao registrar
 	@Column(name = "password", length = 30, nullable = false)
@@ -65,11 +65,11 @@ public class User {
 	@Column(name = "profile", nullable = false)
 	private Set<Integer> profiles = new HashSet<>();// Lista de valores únicos
 	
-	private Set<ProfileEnum> getProfiles() {
+	public Set<ProfileEnum> getProfiles() {
 		return this.profiles.stream().map(x->ProfileEnum.toEnum(x)).collect(Collectors.toSet()); // pega o perfil, transforma em stream, percorre, passa o valor do code e transforma em um setCollector
 	}
 	
-	public void  addProfile(ProfileEnum profileEnum) {
+	public void addProfile(ProfileEnum profileEnum) {
 		this.profiles.add(profileEnum.getCode());
 	}
 }

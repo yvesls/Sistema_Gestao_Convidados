@@ -1,5 +1,10 @@
 package com.yvesprojects.gestaoconvidados.exceptions;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -8,6 +13,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 /*import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;*/
@@ -23,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j(topic = "GLOBAL_EXCEPTION_HANDLER")
 @RestControllerAdvice
-public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends ResponseEntityExceptionHandler implements AuthenticationFailureHandler {
 
 	@Value("${server.error.include-exception}")
 	private Boolean printStackTrace;
@@ -50,7 +57,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Exception exception,
             WebRequest request) {
         final String errorMessage = "Unknown error occurred";
-        //log.error(errorMessage, exception); // precisa do lombok
         return buildErrorResponse(
                 exception,
                 errorMessage,
@@ -83,8 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             DataIntegrityViolationException dataIntegrityViolationException,
             WebRequest request) {
         String errorMessage = dataIntegrityViolationException.getMostSpecificCause().getMessage();
-        //log.error("Failed to save entity with integrity problems: " + errorMessage, dataIntegrityViolationException); // precisa do lombok
-        return buildErrorResponse(
+                return buildErrorResponse(
                 dataIntegrityViolationException,
                 errorMessage,
                 HttpStatus.CONFLICT,
@@ -96,7 +101,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleConstraintViolationException(
             ConstraintViolationException constraintViolationException,
             WebRequest request) {
-        // log.error("Failed to validate element", constraintViolationException);
         return buildErrorResponse(
                 constraintViolationException,
                 HttpStatus.UNPROCESSABLE_ENTITY,
@@ -108,7 +112,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleObjectNotFoundException(
             ObjectNotFoundException objectNotFoundException,
             WebRequest request) {
-        //log.error("Failed to find the requested element", objectNotFoundException);
         return buildErrorResponse(
                 objectNotFoundException,
                 HttpStatus.NOT_FOUND,
@@ -120,12 +123,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleDataBindingViolationException(
             DataBindingViolationException dataBindingViolationException,
             WebRequest request) {
-        //log.error("Failed to save entity with associated data", dataBindingViolationException);
         return buildErrorResponse(
                 dataBindingViolationException,
                 HttpStatus.CONFLICT,
                 request);
     }
+
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException exception) throws IOException, ServletException {
+		Integer status = HttpStatus.UNAUTHORIZED.value();
+        response.setStatus(status);
+        response.setContentType("application/json");
+        ErrorResponse errorResponse = new ErrorResponse(status, "Username or password are invalid");
+        response.getWriter().append(errorResponse.toJson());
+	}
 
     /*@ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -161,15 +173,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 authorizationException,
                 HttpStatus.FORBIDDEN,
                 request);
-    }
-
-    @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-            AuthenticationException exception) throws IOException, ServletException {
-        Integer status = HttpStatus.UNAUTHORIZED.value();
-        response.setStatus(status);
-        response.setContentType("application/json");
-        ErrorResponse errorResponse = new ErrorResponse(status, "Username or password are invalid");
-        response.getWriter().append(errorResponse.toJson());
     }*/
 }

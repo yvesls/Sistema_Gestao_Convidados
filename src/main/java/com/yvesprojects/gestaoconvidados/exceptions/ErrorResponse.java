@@ -59,4 +59,9 @@ public class ErrorResponse {
 	public String getStackTrace() {
 		return stackTrace;
 	}
+
+	public String toJson() {
+		return "{\"status\": " + getStatus() + ", " +
+                "\"message\": \"" + getMessage() + "\"}";
+	}
 }

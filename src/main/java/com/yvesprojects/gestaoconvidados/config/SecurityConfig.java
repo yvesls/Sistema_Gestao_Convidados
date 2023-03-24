@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.yvesprojects.gestaoconvidados.security.JWTAuthenticationFilter;
 import com.yvesprojects.gestaoconvidados.security.JwtUtil;
 
 @Configuration
@@ -60,7 +61,7 @@ public class SecurityConfig {
                             .anyRequest().authenticated().and()
                             .authenticationManager(authenticationManager);
 
-            //http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
+            http.addFilter(new JWTAuthenticationFilter(this.authenticationManager, this.jwtUtil));
             //http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil,
             //                this.userDetailsService));
 

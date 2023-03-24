@@ -53,7 +53,7 @@ public class User {
 	private String username;
 	
 	@JsonProperty(access = Access.WRITE_ONLY) // Define que a senha será somente para escrita, não retornando valor ao registrar
-	@Column(name = "password", length = 30, nullable = false)
+	@Column(name = "password", nullable = false)
 	@NotNull(groups = {CreateUser.class, UpdateUser.class})
 	@NotEmpty(groups = {CreateUser.class, UpdateUser.class})
 	@Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)

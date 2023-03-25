@@ -1,5 +1,6 @@
 package com.yvesprojects.gestaoconvidados.services;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -7,14 +8,17 @@ import java.util.stream.Stream;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.yvesprojects.gestaoconvidados.exceptions.AuthorizationException;
 import com.yvesprojects.gestaoconvidados.exceptions.DataBindingViolationException;
 import com.yvesprojects.gestaoconvidados.exceptions.ObjectNotFoundException;
 import com.yvesprojects.gestaoconvidados.models.User;
 import com.yvesprojects.gestaoconvidados.models.enums.ProfileEnum;
 import com.yvesprojects.gestaoconvidados.repositories.UserRepository;
+import com.yvesprojects.gestaoconvidados.security.UserSpringSecurity;
 
 @Service
 public class UserService {
@@ -26,6 +30,10 @@ public class UserService {
 	private UserRepository userRepository;
 	
 	public User findById(Long id) {
+		UserSpringSecurity userSpringSecurity = this.authenticated();
+		if(!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId()))
+			throw new AuthorizationException("Acesso negado!");
+		
 		Optional<User> user = this.userRepository.findById(id);
 		return user.orElseThrow( () -> new ObjectNotFoundException(
 					"Usuário não encontrado! id: " + id + " tipo: " + User.class.getName() + "."
@@ -54,6 +62,14 @@ public class UserService {
 			this.userRepository.deleteById(id);
 		} catch (Exception e) {
 			throw new DataBindingViolationException("Não é possível excluir pois há entidades relacionadas!");
+		}
+	}
+	
+	public UserSpringSecurity authenticated() {
+		try {
+			return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		}catch(Exception e) {
+			return null;
 		}
 	}
 }

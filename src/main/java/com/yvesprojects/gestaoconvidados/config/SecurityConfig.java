@@ -21,35 +21,28 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.yvesprojects.gestaoconvidados.security.JWTAuthenticationFilter;
 import com.yvesprojects.gestaoconvidados.security.JWTAuthorizationFilter;
-import com.yvesprojects.gestaoconvidados.security.JWTAuthorizationFilter;
-import com.yvesprojects.gestaoconvidados.security.JwtUtil;
+import com.yvesprojects.gestaoconvidados.security.JWTUtil;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-	
+
 	private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+	@Autowired
+	private UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtUtil jwtUtil;
+	@Autowired
+	private JWTUtil jwtUtil;
 
-	private static final String[] PUBLIC_MATCHERS = {
-			"/"
-	};
-	
-	private static final String[] PUBLIC_MATCHERS_POST = {
-			"/user",
-			"/login"
-	};
-	
+	private static final String[] PUBLIC_MATCHERS = { "/" };
+	private static final String[] PUBLIC_MATCHERS_POST = { "/user", "/login" };
+
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-            http.cors().and().csrf().disable(); // desativa a proteção de ataques request (desativado para testes)
+            http.cors().and().csrf().disable();
 
             AuthenticationManagerBuilder authenticationManagerBuilder = http
                             .getSharedObject(AuthenticationManagerBuilder.class);
@@ -72,7 +65,7 @@ public class SecurityConfig {
             return http.build();
     }
 
-	@Bean
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
             CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
             configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE"));
@@ -80,8 +73,8 @@ public class SecurityConfig {
             source.registerCorsConfiguration("/**", configuration);
             return source;
     }
-	
-	@Bean
+
+    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
             return new BCryptPasswordEncoder();
     }

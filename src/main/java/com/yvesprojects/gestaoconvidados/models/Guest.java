@@ -8,23 +8,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = Guest.TABLE_NAME)
 @AllArgsConstructor // cria o construtor automaticamente
 @NoArgsConstructor // construtor vazio
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class Guest {
 	public static final String TABLE_NAME = "guest";
 	
@@ -42,14 +37,12 @@ public class Guest {
 	private User user;
 	
 	@Column(name = "guest_name", length = 30, nullable = false)
-	@NotNull
-	@NotEmpty
+	@NotBlank
 	@Size(min = 2, max = 30)
 	private String guestName;
 	
 	@Column(name = "guest_tel", length = 15, nullable = false)
-	@NotNull
-	@NotEmpty
+	@NotBlank
 	@Size(min = 11, max = 15)
 	private String guestTel;
 	

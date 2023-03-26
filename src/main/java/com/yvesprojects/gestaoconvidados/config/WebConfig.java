@@ -9,7 +9,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**"); // se não tiver esta configuração o Cors vai bloquear qualquer requisição que cai no controller
-	}
+	 public void addCorsMappings(CorsRegistry registry) {
+	        registry.addMapping("/**")
+	                .allowedOrigins("*")
+	                .allowedHeaders("*")
+	                .allowedMethods("GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS");
+	    }
 }

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,8 @@ import com.yvesprojects.gestaoconvidados.exceptions.AuthorizationException;
 import com.yvesprojects.gestaoconvidados.exceptions.DataBindingViolationException;
 import com.yvesprojects.gestaoconvidados.exceptions.ObjectNotFoundException;
 import com.yvesprojects.gestaoconvidados.models.User;
+import com.yvesprojects.gestaoconvidados.models.dto.UserCreateDTO;
+import com.yvesprojects.gestaoconvidados.models.dto.UserUpdateDTO;
 import com.yvesprojects.gestaoconvidados.models.enums.ProfileEnum;
 import com.yvesprojects.gestaoconvidados.repositories.UserRepository;
 import com.yvesprojects.gestaoconvidados.security.UserSpringSecurity;
@@ -44,7 +47,7 @@ public class UserService {
 	public User create(User obj) {
 		obj.setId(null);
 		obj.setPassword(this.bCryptPasswordEncoder.encode(obj.getPassword())); // criptografa a senha
-		 obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
+		obj.setProfiles(Stream.of(ProfileEnum.USER.getCode()).collect(Collectors.toSet()));
 		return this.userRepository.save(obj);
 	}
 	
@@ -71,5 +74,19 @@ public class UserService {
 		}catch(Exception e) {
 			return null;
 		}
+	}
+	
+	public User fromDTO(@Valid UserCreateDTO obj) {
+		User user = new User();
+		user.setUsername(obj.getUsername());
+		user.setPassword(obj.getPassword());
+		return user;
+	}
+	
+	public User fromDTO(@Valid UserUpdateDTO obj) {
+		User user = new User();
+		user.setId(obj.getId());
+		user.setPassword(obj.getPassword());
+		return user;
 	}
 }

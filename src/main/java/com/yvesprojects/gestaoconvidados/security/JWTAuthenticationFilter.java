@@ -21,33 +21,39 @@ import com.yvesprojects.gestaoconvidados.models.User;
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	
 	private AuthenticationManager authenticationManager;
-	private JwtUtil jwtUtil;
-	
-	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-		this.setAuthenticationFailureHandler(new GlobalExceptionHandler());
-		this.authenticationManager = authenticationManager;
-		this.jwtUtil = jwtUtil;
-	}
-	
-	@Override
-	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-		try {
-			User userCredentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
-			UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userCredentials.getUsername(), userCredentials.getPassword(), new ArrayList<>());
-			
-			Authentication authentication = this.authenticationManager.authenticate(authToken);
-			return authentication;
-		} catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	@Override
-	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication) throws IOException, ServletException {
-		UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
-		String username = userSpringSecurity.getUsername();
-		String token = this.jwtUtil.generateToken(username);
-		response.addHeader("Authorization", "Bearer " + token);
-		response.addHeader("access-control-expose-headers", "Authorization");
-	}
+    private JWTUtil jwtUtil;
+
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+        setAuthenticationFailureHandler(new GlobalExceptionHandler());
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    public Authentication attemptAuthentication(HttpServletRequest request,
+            HttpServletResponse response) throws AuthenticationException {
+        try {
+            User userCredentials = new ObjectMapper().readValue(request.getInputStream(), User.class);
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    userCredentials.getUsername(), userCredentials.getPassword(), new ArrayList<>());
+
+            Authentication authentication = this.authenticationManager.authenticate(authToken);
+            return authentication;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void successfulAuthentication(HttpServletRequest request,
+            HttpServletResponse response, FilterChain filterChain, Authentication authentication)
+            throws IOException, ServletException {
+        UserSpringSecurity userSpringSecurity = (UserSpringSecurity) authentication.getPrincipal();
+        String username = userSpringSecurity.getUsername();
+        String token = this.jwtUtil.generateToken(username);
+        response.addHeader("Authorization", "Bearer " + token);
+        response.addHeader("access-control-expose-headers", "Authorization");
+    }
+
 }

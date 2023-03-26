@@ -8,23 +8,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = TypeGuest.TABLE_NAME)
 @AllArgsConstructor // cria o construtor automaticamente
 @NoArgsConstructor // construtor vazio
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 public class TypeGuest {
 	public static final String TABLE_NAME = "type_guest";
 	
@@ -38,8 +35,7 @@ public class TypeGuest {
 	private User user;
 	
 	@Column(name = "type_description", length = 30, nullable = false, unique = true)
-	@NotNull
-	@NotEmpty
+	@NotBlank
 	@Size(min = 2, max = 30)
 	private String typeDescription;
 }

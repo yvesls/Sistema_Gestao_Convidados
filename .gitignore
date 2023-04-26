@@ -2,7 +2,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=maven,java,eclipse
 
 # spring 
-application.properties
+/src/main/resources/application.properties
 
 ### Eclipse ###
 .metadata

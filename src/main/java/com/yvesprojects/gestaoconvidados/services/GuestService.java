@@ -20,62 +20,69 @@ import com.yvesprojects.gestaoconvidados.security.UserSpringSecurity;
 
 @Service
 public class GuestService {
+
 	@Autowired
 	private GuestRepository guestRepository;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private TypeGuestService typeGuestService;
-	
-	public Guest findById(Long id) {
-		Guest guest = this.guestRepository.findById(id).orElseThrow( () -> new ObjectNotFoundException(
-					"Convidado não encontrado! id: " + id + " tipo: " + Guest.class.getName() + "."
-				));
+
+	public Guest findById( Long id ) {
+		Guest guest = this.guestRepository.findById( id ).orElseThrow( () -> new ObjectNotFoundException( "Convidado não encontrado! id: " + id + " tipo: " + Guest.class.getName() + "." ) );
 		UserSpringSecurity userSpringSecurity = userService.authenticated();
-		if(!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !userHasGuest(userSpringSecurity, guest))
-			throw new AuthorizationException("Acesso negado!");
+		if( !Objects.nonNull( userSpringSecurity ) || !userSpringSecurity.hasRole( ProfileEnum.ADMIN ) && !userHasGuest( userSpringSecurity, guest ) )
+			throw new AuthorizationException( "Acesso negado!" );
 		return guest;
 	}
-	
+
+	public Guest findByGuestEmail( Guest obj ) {
+		UserSpringSecurity userSpringSecurity = userService.authenticated();
+		if( !Objects.nonNull( userSpringSecurity ) )
+			throw new AuthorizationException( "Acesso negado!" );
+		Guest guest = this.guestRepository.findByGuestEmail( obj.getGuestEmail() );
+		return guest;
+	}
+
 	public List<GuestProjection> findAllByUser() {
 		UserSpringSecurity userSpringSecurity = userService.authenticated();
-		if(!Objects.nonNull(userSpringSecurity))
-			throw new AuthorizationException("Acesso negado!");
-		List<GuestProjection> guests = this.guestRepository.findByUserId(userSpringSecurity.getId());
+		if( !Objects.nonNull( userSpringSecurity ) )
+			throw new AuthorizationException( "Acesso negado!" );
+		List<GuestProjection> guests = this.guestRepository.findByUserId( userSpringSecurity.getId() );
 		return guests;
 	}
-	
-	@Transactional 
-	public Guest create(Guest obj) {
+
+	@Transactional
+	public Guest create( Guest obj ) {
 		UserSpringSecurity userSpringSecurity = userService.authenticated();
-		if(!Objects.nonNull(userSpringSecurity))
-			throw new AuthorizationException("Acesso negado!");
-		User user = this.userService.findById(userSpringSecurity.getId());
-		TypeGuest typeGuest = this.typeGuestService.findById(obj.getTypeGuest().getTypeId());
-		obj.setUser(user);
-		obj.setTypeGuest(typeGuest);
-		obj.setGuestId(null);
-		return this.guestRepository.save(obj);
+		if( !Objects.nonNull( userSpringSecurity ) )
+			throw new AuthorizationException( "Acesso negado!" );
+		User user = this.userService.findById( userSpringSecurity.getId() );
+		TypeGuest typeGuest = this.typeGuestService.findById( obj.getTypeGuest().getTypeId() );
+		obj.setUser( user );
+		obj.setTypeGuest( typeGuest );
+		obj.setGuestId( null );
+		return this.guestRepository.save( obj );
 	}
-	
-	@Transactional 
-	public Guest update(Guest obj) {
-		Guest newObj = findById(obj.getGuestId());
-		newObj.setTypeGuest(obj.getTypeGuest());
-		newObj.setGuestName(obj.getGuestName());
-		newObj.setPresent(obj.getPresent());
-		
-		return this.guestRepository.save(newObj);
+
+	@Transactional
+	public Guest update( Guest obj ) {
+		Guest newObj = findById( obj.getGuestId() );
+		newObj.setTypeGuest( obj.getTypeGuest() );
+		newObj.setGuestName( obj.getGuestName() );
+		newObj.setPresent( obj.getPresent() );
+		newObj.setGuestEmail( obj.getGuestEmail() );
+		return this.guestRepository.save( newObj );
 	}
-	
-	public void delete(Long id) {
-		findById(id);
-		this.guestRepository.deleteById(id);
+
+	public void delete( Long id ) {
+		findById( id );
+		this.guestRepository.deleteById( id );
 	}
-	
-	private Boolean userHasGuest(UserSpringSecurity userSpringSecurity, Guest guest) {
-		return guest.getUser().getId().equals(userSpringSecurity.getId());
+
+	private Boolean userHasGuest( UserSpringSecurity userSpringSecurity, Guest guest ) {
+		return guest.getUser().getId().equals( userSpringSecurity.getId() );
 	}
 }
